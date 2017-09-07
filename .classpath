@@ -6,5 +6,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="D:/Users/user/git/APIUsageParser/lib/commons-io-2.5.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
