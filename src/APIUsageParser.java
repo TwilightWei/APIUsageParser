@@ -9,6 +9,7 @@ public class APIUsageParser {
 		ConfigReader configReader = new ConfigReader();
 		ArrayList<String> classPaths = new ArrayList<String>();
 		ArrayList<String> libPaths = new ArrayList<String>();
+		ArrayList<String> JavaPaths = new ArrayList<String>();
 		String source = new String();
 		
 		final String configPath = "D:\\Users\\user\\git\\APIUsageParser\\src\\config.properties";
@@ -17,10 +18,9 @@ public class APIUsageParser {
 		classPaths.add(configReader.readConfig(configPath, "classpath"));
 		libPaths = fileParser.getFilePaths(source, "jar");
 		libPaths.addAll(classPaths);
+		JavaPaths = fileParser.getFilePaths(source, "java");
 		
-	}
-	
-	
-	// First initial classPaths, sources and javaPaths
-	
+		
+		
+	}	
 }
