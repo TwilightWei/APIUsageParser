@@ -21,19 +21,19 @@ public class FileParser {
 	}
 	
 	// get all path of files in root with specific extension
-	public List<File> getFiles(File folder, String extension) {
-		List<File> filePaths = new ArrayList<File>();
+	private List<File> getFiles(File folder, String extension) {
+		List<File> files = new ArrayList<File>();
 
 	    for (final File fileEntry : folder.listFiles()) {
 	        if (fileEntry.isDirectory()) {
-	        	filePaths.addAll(getFiles(fileEntry, extension));
+	        	files.addAll(getFiles(fileEntry, extension));
 	        }
 	        else if (FilenameUtils.getExtension(fileEntry.toString()).endsWith(extension)) {
-	        	filePaths.add(fileEntry);
+	        	files.add(fileEntry);
 	        }
 	    }
 	    
-		return filePaths;
+		return files;
 	}
 
 }
