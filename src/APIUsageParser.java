@@ -1,7 +1,5 @@
-import java.io.IOException;
 import java.util.ArrayList;
 import config.ConfigReader;
-import files.APIFileIO;
 import files.FileParser;
 
 public class APIUsageParser {
