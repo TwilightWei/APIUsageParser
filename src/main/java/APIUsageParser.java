@@ -1,11 +1,14 @@
+package main.java;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import ast.CustomASTParser;
-import config.ConfigReader;
-import file.FileParser;
-import hashmap.APIHashMap;
+import main.java.ast.CustomASTParser;
+import main.java.config.ConfigReader;
+import main.java.file.FileIO;
+import main.java.file.FileParser;
+import main.java.hashmap.APIHashMap;
+import main.java.json.JsonIO;
 
 public class APIUsageParser {
 	
@@ -38,5 +41,14 @@ public class APIUsageParser {
 		}
 		
 		System.out.println("Finished parsing AST");
+		
+		JsonIO jsonIO = new JsonIO();
+		jsonIO.addString(apiHashMap.apiLevel, "level");
+		jsonIO.addInt(apiHashMap.apiCount, "count");
+		
+		FileIO file = new FileIO(source);
+		file.clearFolder("\\APIUsage");
+		file.writeString("\\APIUsage\\Class", jsonIO.json.toString());
+		System.out.println("Finished writing file");
 	}	
 }

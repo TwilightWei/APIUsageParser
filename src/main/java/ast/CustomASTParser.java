@@ -1,4 +1,4 @@
-package ast;
+package main.java.ast;
 import java.io.File;
 import java.util.Map;
 import org.eclipse.jdt.core.JavaCore;
@@ -6,8 +6,8 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-//import ast.finder.AllFinder;
-import hashmap.APIHashMap;
+import main.java.finder.Finder;
+import main.java.hashmap.APIHashMap;
 
  
 public class CustomASTParser {
@@ -41,7 +41,7 @@ public class CustomASTParser {
 			System.out.println("Binding not activated!");
 		}
 		
-		//AllFinder allFinder = new AllFinder(apiHashMap);
-		//cu.accept(allFinder);
+		Finder finder = new Finder(apiHashMap);
+		cu.accept(finder);
 	}
 }
