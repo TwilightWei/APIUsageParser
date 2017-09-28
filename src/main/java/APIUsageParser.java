@@ -14,6 +14,8 @@ public class APIUsageParser {
 	
 	public static void main(String[] args) {
 		APIHashMap apiHashMap = new APIHashMap();
+		APIHashMap methodHashMap = new APIHashMap();
+		APIHashMap fieldHashMap = new APIHashMap();
 		FileParser fileParser = new FileParser();
 		ConfigReader configReader = new ConfigReader();
 		ArrayList<String> classPaths = new ArrayList<String>();
@@ -37,18 +39,29 @@ public class APIUsageParser {
 		for(File javaFile : javaFiles) {
 			String javaCode = fileParser.getFileContent(javaFile.toString());
 			CustomASTParser astParser = new CustomASTParser(classPathArray, sourceArray);
-			astParser.parse(javaCode, javaFile, apiHashMap);
+			astParser.parse(javaCode, javaFile, apiHashMap, methodHashMap, fieldHashMap);
 		}
 		
 		System.out.println("Finished parsing AST");
 		
-		JsonIO jsonIO = new JsonIO();
-		jsonIO.addString(apiHashMap.apiLevel, "level");
-		jsonIO.addInt(apiHashMap.apiCount, "count");
+		// TOFIX Seperate Class, Method, Field
+		JsonIO classIO = new JsonIO();
+		classIO.addString(apiHashMap.apiLevel, "level");
+		classIO.addInt(apiHashMap.apiCount, "count");
+		
+		JsonIO methodIO = new JsonIO();
+		methodIO.addString(methodHashMap.apiLevel, "level");
+		methodIO.addInt(methodHashMap.apiCount, "count");
+		
+		JsonIO fieldIO = new JsonIO();
+		fieldIO.addString(fieldHashMap.apiLevel, "level");
+		fieldIO.addInt(fieldHashMap.apiCount, "count");
 		
 		FileIO file = new FileIO(source);
 		file.clearFolder("\\APIUsage");
-		file.writeString("\\APIUsage\\Class", jsonIO.json.toString());
+		file.writeString("\\APIUsage\\Class", classIO.json.toString());
+		file.writeString("\\APIUsage\\Method", methodIO.json.toString());
+		file.writeString("\\APIUsage\\Field", fieldIO.json.toString());
 		System.out.println("Finished writing file");
 	}	
 }

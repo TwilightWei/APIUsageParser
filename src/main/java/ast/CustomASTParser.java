@@ -22,7 +22,7 @@ public class CustomASTParser {
 	/*
 	 * Set up environment, create AST and parse it
 	 */
-	public void parse(String javaCode, File filePath, APIHashMap apiHashMap) {
+	public void parse(String javaCode, File filePath, APIHashMap apiHashMap, APIHashMap methodHashMap, APIHashMap fieldHashMap) {
 		ASTParser parser = ASTParser.newParser(AST.JLS8);
 		
 		Map<String, String> options = JavaCore.getOptions();
@@ -41,7 +41,7 @@ public class CustomASTParser {
 			System.out.println("Binding not activated!");
 		}
 		
-		Finder finder = new Finder(apiHashMap);
+		Finder finder = new Finder(apiHashMap, methodHashMap, fieldHashMap);
 		cu.accept(finder);
 	}
 }
