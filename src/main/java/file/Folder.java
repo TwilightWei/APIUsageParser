@@ -10,11 +10,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 
-public class FileIO {
+public class Folder {
 	private String source = new String();
 	
-	public FileIO(String source){
+	public Folder(String source){
 		this.source = source;
 	}
 	
@@ -76,10 +77,23 @@ public class FileIO {
     	bw.close();
 	}
 	
-	
 	public void writeString(String filePath, String content) {
 		try {
 			appendFile(source + filePath + ".txt", content);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void writeArrayList(String filePath, ArrayList<String> content) {
+		StringBuilder sb = new StringBuilder();
+		for (String s : content)
+		{
+		    sb.append(s);
+		    sb.append("\n");
+		}
+		try {
+			appendFile(source + filePath + ".txt", sb.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

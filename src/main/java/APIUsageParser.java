@@ -1,11 +1,13 @@
 package main.java;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 
 import main.java.ast.CustomASTParser;
 import main.java.config.ConfigReader;
-import main.java.file.FileIO;
+import main.java.file.Folder;
 import main.java.file.FileParser;
 import main.java.hashmap.APIHashMap;
 import main.java.json.JsonIO;
@@ -13,55 +15,87 @@ import main.java.json.JsonIO;
 public class APIUsageParser {
 	
 	public static void main(String[] args) {
-		APIHashMap apiHashMap = new APIHashMap();
-		APIHashMap methodHashMap = new APIHashMap();
-		APIHashMap fieldHashMap = new APIHashMap();
-		FileParser fileParser = new FileParser();
-		ConfigReader configReader = new ConfigReader();
-		ArrayList<String> classPaths = new ArrayList<String>();
-		ArrayList<String> libPaths = new ArrayList<String>();
-		List<File> javaFiles = new ArrayList<File>();
-		String source = new String();
-		String[] classPathArray;
-		String[] sourceArray;
-		
 		final String configPath = "D:\\Users\\user\\git\\APIUsageParser\\src\\config.properties";
+		ConfigReader configReader = new ConfigReader();
+		ArrayList<String> sourceList = new ArrayList<String>();
 		
-		source = configReader.readConfig(configPath, "source");
-		classPaths.add(configReader.readConfig(configPath, "classpath"));
-		libPaths = fileParser.getFilePaths(source, "jar");
-		classPaths.addAll(libPaths);
-		javaFiles = fileParser.getFiles(source, "java");
+		//Important folder path
+		String dependencyFolder = "\\Dependencies";
+		String outputFolder = "\\APIUsage-AllJAR";
 		
-		classPathArray = classPaths.toArray(new String[0]);
-		sourceArray = new String[] {source};
+		configReader.setConfig(configPath);
+		sourceList = configReader.getValAsStringArrayList("sources");
 		
-		for(File javaFile : javaFiles) {
-			String javaCode = fileParser.getFileContent(javaFile.toString());
-			CustomASTParser astParser = new CustomASTParser(classPathArray, sourceArray);
-			astParser.parse(javaCode, javaFile, apiHashMap, methodHashMap, fieldHashMap);
+		for(String source:sourceList) {
+			APIHashMap apiHashMap = new APIHashMap();
+			APIHashMap methodHashMap = new APIHashMap();
+			APIHashMap fieldHashMap = new APIHashMap();
+			
+			FileParser fileParser = new FileParser();
+			ArrayList<String> classPaths = new ArrayList<String>();
+			ArrayList<String> libPaths = new ArrayList<String>();
+			List<File> javaFiles = new ArrayList<File>();
+			String[] classPathArray;
+			String[] sourceArray;
+			JsonIO classIO = new JsonIO();
+			JsonIO methodIO = new JsonIO();
+			JsonIO fieldIO = new JsonIO();
+			Folder file;
+			
+			ArrayList<String> classList = new ArrayList<String>();
+			ArrayList<String> methodList = new ArrayList<String>();
+			ArrayList<String> fieldList = new ArrayList<String>();
+			
+			file = new Folder(source);
+			file.createFolder(dependencyFolder);		
+			
+			libPaths = fileParser.getFilePaths(source + dependencyFolder, "jar");
+			classPaths.add(configReader.getValue("classpath"));
+			classPaths.addAll(libPaths);
+			
+			javaFiles = fileParser.getFiles(source, "java");
+			
+			classPathArray = classPaths.toArray(new String[0]);
+			sourceArray = new String[] {source};
+			
+			for(File javaFile : javaFiles) {
+				String javaCode = fileParser.getFileContent(javaFile.toString());
+				CustomASTParser astParser = new CustomASTParser(classPathArray, sourceArray);
+				astParser.parse(javaCode, javaFile, apiHashMap, methodHashMap, fieldHashMap);
+			}
+			System.out.println("Finished parsing AST");
+			
+			classIO.addInt(apiHashMap.apiCount, "count");
+			methodIO.addInt(methodHashMap.apiCount, "count");
+			fieldIO.addInt(fieldHashMap.apiCount, "count");
+			
+			file.clearFolder(outputFolder);
+			file.writeString(outputFolder+"\\Class", classIO.json.toString());
+			file.writeString(outputFolder+"\\Method", methodIO.json.toString());
+			file.writeString(outputFolder+"\\Field", fieldIO.json.toString());
+			
+			classList.clear();
+			for(Entry<String, Integer> entry : apiHashMap.apiCount.entrySet()) {
+				classList.add(entry.getKey());
+			}
+			Collections.sort(classList);
+			file.writeArrayList(outputFolder+"\\ClassList", classList);
+			
+			methodList.clear();
+			for(Entry<String, Integer> entry : methodHashMap.apiCount.entrySet()) {
+				methodList.add(entry.getKey());
+			}
+			Collections.sort(methodList);
+			file.writeArrayList(outputFolder+"\\MethodList", methodList);
+			
+			fieldList.clear();
+			for(Entry<String, Integer> entry : fieldHashMap.apiCount.entrySet()) {
+				fieldList.add(entry.getKey());
+			}
+			Collections.sort(fieldList);
+			file.writeArrayList(outputFolder+"\\FieldList", fieldList);
+			
+			System.out.println("Finished writing file");
 		}
-		
-		System.out.println("Finished parsing AST");
-		
-		// TOFIX Seperate Class, Method, Field
-		JsonIO classIO = new JsonIO();
-		classIO.addString(apiHashMap.apiLevel, "level");
-		classIO.addInt(apiHashMap.apiCount, "count");
-		
-		JsonIO methodIO = new JsonIO();
-		methodIO.addString(methodHashMap.apiLevel, "level");
-		methodIO.addInt(methodHashMap.apiCount, "count");
-		
-		JsonIO fieldIO = new JsonIO();
-		fieldIO.addString(fieldHashMap.apiLevel, "level");
-		fieldIO.addInt(fieldHashMap.apiCount, "count");
-		
-		FileIO file = new FileIO(source);
-		file.clearFolder("\\APIUsage");
-		file.writeString("\\APIUsage\\Class", classIO.json.toString());
-		file.writeString("\\APIUsage\\Method", methodIO.json.toString());
-		file.writeString("\\APIUsage\\Field", fieldIO.json.toString());
-		System.out.println("Finished writing file");
 	}	
 }

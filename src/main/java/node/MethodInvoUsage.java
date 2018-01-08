@@ -29,7 +29,6 @@ public class MethodInvoUsage {
 			meth += ")";
 			//System.out.println("Method: "+ meth);
 			methodHashMap.countAPI(meth);
-			methodHashMap.addAPI(meth, "Methods");
 		}
 	}
 }
