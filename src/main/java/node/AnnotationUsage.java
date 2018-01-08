@@ -17,7 +17,6 @@ public class AnnotationUsage {
 					for(IAnnotationBinding item:node.resolveBinding().getAnnotations()){
 						String type = item.getAnnotationType().getQualifiedName();
 						apiHashMap.countAPI(type);
-						apiHashMap.addAPI(type, "Classes");
 					}
 				}
 			}

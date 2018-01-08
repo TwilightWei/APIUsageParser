@@ -4,7 +4,9 @@ import java.util.HashMap;
 
 public class APIHashMap {
 	public HashMap<String, Integer> apiCount = new HashMap<String, Integer>();
+	public HashMap<String, String> methodPara = new HashMap<String, String>();
 	public HashMap<String, String> apiLevel = new HashMap<String, String>();
+
 	
 	public void countAPI(String key){
 		if(apiCount.containsKey(key)){
@@ -24,9 +26,5 @@ public class APIHashMap {
 				System.err.println("API level consistency!!!: " + apiLevel.get(key));
 			}
 		}
-	}
-	
-	public void print(String key){
-		System.out.println(apiCount.get(key));
 	}
 }

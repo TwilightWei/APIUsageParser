@@ -7,7 +7,7 @@ import main.java.hashmap.APIHashMap;
 
 public class ConstructorInvoUsage {
 	public void find(ClassInstanceCreation node, APIHashMap methodHashMap) {
-		if(node.getType() != null) {
+		if(node.getType() != null && node.getType().resolveBinding() != null) {
 			//System.out.println("\n---------ClassInstanceCreation---------");
 			//System.out.println("Node: " + node);
 			//System.out.println("Node: " + node.getType());
@@ -36,7 +36,6 @@ public class ConstructorInvoUsage {
 			}
 			//System.out.println(cons);
 			methodHashMap.countAPI(cons);
-			methodHashMap.addAPI(cons, "Methods");
 		}
 	}
 }
