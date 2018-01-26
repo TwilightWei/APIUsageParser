@@ -176,7 +176,8 @@ public class GenericClassUsage {
 			
 			String leftType = type.substring(0, type.indexOf("<"));
 			if(type.length() > 0) {
-				apiHashMap.countAPI(leftType);
+				//apiHashMap.countAPI(leftType);
+				apiHashMap.addAPI(leftType, "Class");
 			}
 
 			ArrayList<String> rightTypes = slice(type.substring(type.indexOf("<") + 1, type.lastIndexOf(">")));
@@ -185,7 +186,8 @@ public class GenericClassUsage {
 			} 
 		} else {
 			if(type.length() > 0) {
-				apiHashMap.countAPI(type);
+				//apiHashMap.countAPI(type);
+				apiHashMap.addAPI(type, "Class");
 			}
 		} 
 	}

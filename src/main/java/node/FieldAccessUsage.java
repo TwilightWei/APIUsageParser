@@ -16,7 +16,8 @@ public class FieldAccessUsage {
 					//System.out.println("Tyep: " + ((IVariableBinding) node.resolveBinding()).getDeclaringClass().getQualifiedName());
 					//System.out.println(((IVariableBinding) node.resolveBinding()).getName());
 					String fieldAccess = ((IVariableBinding) node.resolveBinding()).getDeclaringClass().getQualifiedName()+"."+((IVariableBinding) node.resolveBinding()).getName();
-					apiHashMap.countAPI(fieldAccess);
+					//apiHashMap.countAPI(fieldAccess);
+					apiHashMap.addAPI(fieldAccess, "Field");
 				}
 			}
 		}

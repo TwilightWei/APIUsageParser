@@ -35,7 +35,8 @@ public class ConstructorInvoUsage {
 				cons += "()";
 			}
 			//System.out.println(cons);
-			methodHashMap.countAPI(cons);
+			//methodHashMap.countAPI(cons);
+			methodHashMap.addAPI(cons, "Method");
 		}
 	}
 }

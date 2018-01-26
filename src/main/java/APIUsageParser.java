@@ -19,32 +19,36 @@ public class APIUsageParser {
 		ConfigReader configReader = new ConfigReader();
 		ArrayList<String> sourceList = new ArrayList<String>();
 		
-		//Important folder path
-		String dependencyFolder = "\\Dependencies";
-		String outputFolder = "\\APIUsage-AllJAR";
+		//Folder paths of source code and jar files.
+		String dependencyFolder = "\\Dependencies-NoSpring";
+		String outputFolder = "\\APIUsage-NoSpring";
 		
 		configReader.setConfig(configPath);
 		sourceList = configReader.getValAsStringArrayList("sources");
 		
 		for(String source:sourceList) {
-			APIHashMap apiHashMap = new APIHashMap();
-			APIHashMap methodHashMap = new APIHashMap();
-			APIHashMap fieldHashMap = new APIHashMap();
-			
 			FileParser fileParser = new FileParser();
-			ArrayList<String> classPaths = new ArrayList<String>();
-			ArrayList<String> libPaths = new ArrayList<String>();
 			List<File> javaFiles = new ArrayList<File>();
 			String[] classPathArray;
 			String[] sourceArray;
+			Folder file;
+			
+			//Temp. API data storage
+			APIHashMap classHashMap = new APIHashMap();
+			APIHashMap methodHashMap = new APIHashMap();
+			APIHashMap fieldHashMap = new APIHashMap();
+			
+			//Final API data output
 			JsonIO classIO = new JsonIO();
 			JsonIO methodIO = new JsonIO();
 			JsonIO fieldIO = new JsonIO();
-			Folder file;
-			
 			ArrayList<String> classList = new ArrayList<String>();
 			ArrayList<String> methodList = new ArrayList<String>();
 			ArrayList<String> fieldList = new ArrayList<String>();
+			
+			//Dependencies for API parsing
+			ArrayList<String> classPaths = new ArrayList<String>();
+			ArrayList<String> libPaths = new ArrayList<String>();
 			
 			file = new Folder(source);
 			file.createFolder(dependencyFolder);		
@@ -61,34 +65,35 @@ public class APIUsageParser {
 			for(File javaFile : javaFiles) {
 				String javaCode = fileParser.getFileContent(javaFile.toString());
 				CustomASTParser astParser = new CustomASTParser(classPathArray, sourceArray);
-				astParser.parse(javaCode, javaFile, apiHashMap, methodHashMap, fieldHashMap);
+				astParser.parse(javaCode, javaFile, classHashMap, methodHashMap, fieldHashMap);
 			}
 			System.out.println("Finished parsing AST");
 			
-			classIO.addInt(apiHashMap.apiCount, "count");
-			methodIO.addInt(methodHashMap.apiCount, "count");
-			fieldIO.addInt(fieldHashMap.apiCount, "count");
+			classHashMap.removeInternalAPI();
+			methodHashMap.removeInternalAPI();
+			fieldHashMap.removeInternalAPI();
+			
+			classIO.buildAPIData(classHashMap);
+			methodIO.buildAPIData(methodHashMap);
+			fieldIO.buildAPIData(fieldHashMap);
 			
 			file.clearFolder(outputFolder);
-			file.writeString(outputFolder+"\\Class", classIO.json.toString());
-			file.writeString(outputFolder+"\\Method", methodIO.json.toString());
-			file.writeString(outputFolder+"\\Field", fieldIO.json.toString());
-			
-			classList.clear();
-			for(Entry<String, Integer> entry : apiHashMap.apiCount.entrySet()) {
+			file.writeString(outputFolder+"\\Class", classIO.jsonObj.toString());
+			file.writeString(outputFolder+"\\Method", methodIO.jsonObj.toString());
+			file.writeString(outputFolder+"\\Field", fieldIO.jsonObj.toString());
+
+			for(Entry<String, Integer> entry : classHashMap.apiCount.entrySet()) {
 				classList.add(entry.getKey());
 			}
 			Collections.sort(classList);
 			file.writeArrayList(outputFolder+"\\ClassList", classList);
 			
-			methodList.clear();
 			for(Entry<String, Integer> entry : methodHashMap.apiCount.entrySet()) {
 				methodList.add(entry.getKey());
 			}
 			Collections.sort(methodList);
 			file.writeArrayList(outputFolder+"\\MethodList", methodList);
 			
-			fieldList.clear();
 			for(Entry<String, Integer> entry : fieldHashMap.apiCount.entrySet()) {
 				fieldList.add(entry.getKey());
 			}
